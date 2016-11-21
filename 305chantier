@@ -2,45 +2,67 @@
 # coding: utf-8
 
 import csv
+import sys
 
-def time_planning(my_list):
-    time = 0
-    already_seen = []
-    for line in my_list:
-        fused_time = 0
-        if line[0] not in already_seen:
-            fused_time = int(line[2])
-            task = [line[0]]
-            for sub in my_list:
-                com = (set(line[3:]) & set(sub[3:]))
-                #com = []
-                if (com and (sub[0] != line[0])):
-                    task.append(sub[0])
-                    #print(line[0],"&",sub[0])
-                    fused_time = fused_time if fused_time > int(sub[2]) else int(sub[2])
-                    already_seen.append(sub[0])
-        if fused_time > 0: print(task,fused_time)
-        time += fused_time
-        already_seen.append(line[0])
-    print(time)
-
-def create_map_need(my_list):
+def create_graph(my_list):
     my_map = {}
     for line in my_list:
         my_map[line[0]] = line[3:]
     return my_map
 
+def find_all_paths(graph, start, end, path=[]):
+    path = path + [start]
+    if start == end:
+        return [path]
+    if start not in graph:
+        return []
+    paths = []
+    for node in graph[start]:
+        if node not in path:
+            newpaths = find_all_paths(graph, node, end, path)
+            for newpath in newpaths:
+                paths.append(newpath)
+    return paths
 
+def find_longest_path(graph, start, end, path=[]):
+    path = path + [start]
+    if start == end:
+        return path
+    if start not in graph:
+        return None
+    longest = None
+    for node in graph[start]:
+        if node not in path:
+            newpath = find_longest_path(graph, node, end, path)
+            if newpath:
+                if not longest or len(newpath) < len(longest):
+                    longest = newpath
+        return longest
 
+def test(my_key, my_graph, task):
+    paths = []
+    for key in my_key:
+        paths += find_all_paths(my_graph, key, task)
+    print(paths)
 
-my_list = []
-
-with open('test', newline='') as csvfile:
+with open(sys.argv[1], newline='') as csvfile:
     timetable = csv.reader(csvfile, delimiter=';')
+    my_list = []
+    my_root = []
     for line in timetable:
+        if len(line) < 4:
+            my_root.append(line[0])
         my_list.append(line)
 
-#time_planning(my_list)
-#my_map = create_map_need(my_list)
-time_planning(my_list)
+
+my_graph = create_graph(my_list)
 #print(my_list)
+#print()
+#test(my_root, my_graph, my_list[5][0])
+#print(my_graph)
+for elem in my_graph:
+    print(elem, my_graph[elem])
+print(find_all_paths(my_graph, 'Ele', my_root[0]))
+
+print(find_longest_path(my_graph, 'Ele', my_root[0]))
+
