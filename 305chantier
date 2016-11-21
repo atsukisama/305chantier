@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+import csv
+
+def time_planning(my_list):
+    time = 0
+    already_seen = []
+    for line in my_list:
+        fused_time = 0
+        if line[0] not in already_seen:
+            fused_time = int(line[2])
+            task = [line[0]]
+            for sub in my_list:
+                com = (set(line[3:]) & set(sub[3:]))
+                #com = []
+                if (com and (sub[0] != line[0])):
+                    task.append(sub[0])
+                    #print(line[0],"&",sub[0])
+                    fused_time = fused_time if fused_time > int(sub[2]) else int(sub[2])
+                    already_seen.append(sub[0])
+        if fused_time > 0: print(task,fused_time)
+        time += fused_time
+        already_seen.append(line[0])
+    print(time)
+
+def create_map_need(my_list):
+    my_map = {}
+    for line in my_list:
+        my_map[line[0]] = line[3:]
+    return my_map
+
+
+
+
+my_list = []
+
+with open('test', newline='') as csvfile:
+    timetable = csv.reader(csvfile, delimiter=';')
+    for line in timetable:
+        my_list.append(line)
+
+#time_planning(my_list)
+#my_map = create_map_need(my_list)
+time_planning(my_list)
+#print(my_list)
