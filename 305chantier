@@ -3,6 +3,7 @@
 
 import csv
 import sys
+import signal
 
 #Define var
 NAME        = 0
@@ -59,7 +60,6 @@ def set_tab(my_root, my_graph):
         my_graph[ID][END] = my_graph[ID][START] + my_graph[ID][DURATION]
         if my_graph[ID][END] > project_duration: project_duration = my_graph[ID][END]
     set_float(my_graph, project_duration)
-    return project_duration
 
 def print_gantt(my_graph):
     #Sorting
@@ -67,6 +67,8 @@ def print_gantt(my_graph):
     for ID in my_graph:
         tuple_list.append((ID, my_graph[ID][END]))
     tuple_list = sorted(tuple_list, key=lambda elem: (elem[1], elem[0]))
+    #printing work duration
+    print("durée totale des travaux :", my_graph[tuple_list[-1][0]][END],"semaines")
     #Printing gantt txt
     print()
     for elem in tuple_list:
@@ -84,6 +86,8 @@ def print_gantt(my_graph):
 
 
 #Main script start
+if (len(sys.argv) != 2):
+    exit(84)
 try:
     with open(sys.argv[1], newline='') as csvfile:
         timetable = csv.reader(csvfile, delimiter=';')
@@ -99,24 +103,13 @@ try:
             except:
                 exit(84)
             container.append(line[3:])
-            container.append(0)
-            container.append(0)
-            container.append(0)
+            container.extend((0,0,0))
+            if line[0] in my_graph:
+                exit(84)
             my_graph[line[0]] = container
 except:
     exit(84)
 
-work_duration = set_tab(my_root,my_graph)
-print("durée totale des travaux :", work_duration,"semaines")
+set_tab(my_root,my_graph)
 print_gantt(my_graph)
-# for ID in my_graph:
-#     print(ID, my_graph[ID])
-
-# tuple_l = []
-# for ID in my_graph:
-#     tuple_l.append((ID, my_graph[ID][END]))
-
-# print(sorted(tuple_l, key=lambda elem: (elem[1], elem[0])))
-
-
 #Main script end
