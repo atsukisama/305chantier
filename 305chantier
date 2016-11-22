@@ -4,11 +4,14 @@
 import csv
 import sys
 
-def create_graph(my_list):
-    my_map = {}
-    for line in my_list:
-        my_map[line[0]] = line[3:]
-    return my_map
+#Define var
+NAME        = 0
+DURATION    = 1
+NEED        = 2
+START       = 3
+END         = 4
+FLOAT       = 5
+#Define var END
 
 def find_all_paths(graph, start, end, path=[]):
     path = path + [start]
@@ -17,52 +20,71 @@ def find_all_paths(graph, start, end, path=[]):
     if start not in graph:
         return []
     paths = []
-    for node in graph[start]:
+    for node in graph[start][NEED]:
         if node not in path:
             newpaths = find_all_paths(graph, node, end, path)
             for newpath in newpaths:
                 paths.append(newpath)
     return paths
 
-def find_longest_path(graph, start, end, path=[]):
-    path = path + [start]
-    if start == end:
-        return path
-    if start not in graph:
-        return None
-    longest = None
-    for node in graph[start]:
-        if node not in path:
-            newpath = find_longest_path(graph, node, end, path)
-            if newpath:
-                if not longest or len(newpath) < len(longest):
-                    longest = newpath
-        return longest
+def get_length(my_graph, path):
+    length = 0
+    for task in path[1:]:
+        length += my_graph[task][DURATION]
+    return length
 
-def test(my_key, my_graph, task):
+def get_start(my_root, my_graph, task):
+    length = 0
     paths = []
-    for key in my_key:
-        paths += find_all_paths(my_graph, key, task)
-    print(paths)
+    for key in my_root:
+        tmp = find_all_paths(my_graph, task, key)
+        if tmp: paths += tmp
+    for path in paths:
+        tmp = get_length(my_graph, path)
+        if tmp > length: length = tmp
+    return length
 
-with open(sys.argv[1], newline='') as csvfile:
-    timetable = csv.reader(csvfile, delimiter=';')
-    my_list = []
-    my_root = []
-    for line in timetable:
-        if len(line) < 4:
-            my_root.append(line[0])
-        my_list.append(line)
+def set_tab(my_root, my_graph):
+    project_duration = 0
+    for ID in my_graph:
+        my_graph[ID][START] = get_start(my_root, my_graph, ID)
+        my_graph[ID][END] = my_graph[ID][START] + my_graph[ID][DURATION]
+        if my_graph[ID][END] > project_duration: project_duration = my_graph[ID][END]
+    return project_duration
+
+#Main script start
+try:
+    with open(sys.argv[1], newline='') as csvfile:
+        timetable = csv.reader(csvfile, delimiter=';')
+        my_graph = {}
+        my_root = []
+        for line in timetable:
+            container = []
+            if len(line) < 4:
+                my_root.append(line[0])
+            container.append(line[1])
+            try:
+                container.append(int(line[2]))
+            except:
+                exit(84)
+            container.append(line[3:])
+            container.append(0)
+            container.append(0)
+            container.append(0)
+            my_graph[line[0]] = container
+except:
+    exit(84)
+
+print("durée totale des travaux :", set_tab(my_root,my_graph),"semaines")
+
+for ID in my_graph:
+    print(ID, my_graph[ID])
+
+# tuple_l = []
+# for ID in my_graph:
+#     tuple_l.append((ID, my_graph[ID][END]))
+
+# print(sorted(tuple_l, key=lambda elem: (elem[1], elem[0])))
 
 
-my_graph = create_graph(my_list)
-#print(my_list)
-#print()
-#test(my_root, my_graph, my_list[5][0])
-#print(my_graph)
-for elem in my_graph:
-    print(elem, my_graph[elem])
-print(find_all_paths(my_graph, 'Ele', my_root[0]))
-
-print(find_longest_path(my_graph, 'Ele', my_root[0]))
-
+#Main script end
