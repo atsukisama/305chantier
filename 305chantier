@@ -44,13 +44,44 @@ def get_start(my_root, my_graph, task):
         if tmp > length: length = tmp
     return length
 
+def set_float(my_graph, project_duration):
+    for task in my_graph:
+        next_time = project_duration
+        for ID in my_graph:
+            if task in my_graph[ID][NEED] and next_time > my_graph[ID][START]:
+                next_time = my_graph[ID][START]
+        my_graph[task][FLOAT] = next_time - my_graph[task][END]
+
 def set_tab(my_root, my_graph):
     project_duration = 0
     for ID in my_graph:
         my_graph[ID][START] = get_start(my_root, my_graph, ID)
         my_graph[ID][END] = my_graph[ID][START] + my_graph[ID][DURATION]
         if my_graph[ID][END] > project_duration: project_duration = my_graph[ID][END]
+    set_float(my_graph, project_duration)
     return project_duration
+
+def print_gantt(my_graph):
+    #Sorting
+    tuple_list = []
+    for ID in my_graph:
+        tuple_list.append((ID, my_graph[ID][END]))
+    tuple_list = sorted(tuple_list, key=lambda elem: (elem[1], elem[0]))
+    #Printing gantt txt
+    print()
+    for elem in tuple_list:
+        ID = elem[0]
+        if my_graph[ID][FLOAT] > 0:
+            print(ID,"doit débuter entre","t="+str(my_graph[ID][START]),"et","t="+str(my_graph[ID][START] + my_graph[ID][FLOAT]))
+        else:
+            print(ID,"doit débuter à","t="+str(my_graph[ID][START]))
+    #printing gant txt schema
+    print()
+    for elem in tuple_list:
+        ID = elem[0] 
+        print(ID,"\t","("+str(my_graph[ID][FLOAT])+")","\t"+str(" "*my_graph[ID][START])+str("="*my_graph[ID][DURATION]))
+
+
 
 #Main script start
 try:
@@ -75,10 +106,11 @@ try:
 except:
     exit(84)
 
-print("durée totale des travaux :", set_tab(my_root,my_graph),"semaines")
-
-for ID in my_graph:
-    print(ID, my_graph[ID])
+work_duration = set_tab(my_root,my_graph)
+print("durée totale des travaux :", work_duration,"semaines")
+print_gantt(my_graph)
+# for ID in my_graph:
+#     print(ID, my_graph[ID])
 
 # tuple_l = []
 # for ID in my_graph:
