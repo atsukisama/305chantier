@@ -81,7 +81,7 @@ def print_gantt(my_graph):
     print()
     for elem in my_list:
         ID = elem[0] 
-        print(ID,"\t"+"("+str(my_graph[ID][FLOAT])+")"+"\t"+str(" "*my_graph[ID][START])+str("="*my_graph[ID][DURATION]))
+        print(ID+"\t"+"("+str(my_graph[ID][FLOAT])+")"+"\t"+str(" "*my_graph[ID][START])+str("="*my_graph[ID][DURATION]))
 
 
 
