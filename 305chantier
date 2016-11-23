@@ -94,16 +94,17 @@ try:
         my_graph = {}
         my_root = []
         for line in timetable:
-            container = []
-            if len(line) < 4:
-                my_root.append(line[0])
-            container.append(line[1])
-            container.append(int(line[2]))
-            container.append(line[3:])
-            container.extend((0,0,0))
-            if line[0] in my_graph:
-                exit(84)
-            my_graph[line[0]] = container
+            if len(line) != 0:
+                container = []
+                if len(line) < 4:
+                    my_root.append(line[0])
+                container.append(line[1])
+                container.append(int(line[2]))
+                container.append(line[3:])
+                container.extend((0,0,0))
+                if line[0] in my_graph:
+                    exit(84)
+                my_graph[line[0]] = container
 except:
     exit(84)
 
