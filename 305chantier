@@ -98,19 +98,13 @@ try:
             if len(line) < 4:
                 my_root.append(line[0])
             container.append(line[1])
-            try:
-                container.append(int(line[2]))
-            except:
-                sys.stderr.write("String found instead of numbers !\n")
-                exit(84)
+            container.append(int(line[2]))
             container.append(line[3:])
             container.extend((0,0,0))
             if line[0] in my_graph:
-                sys.stderr.write("Same ID found for 2 different item !\n")
                 exit(84)
             my_graph[line[0]] = container
 except:
-    sys.stderr.write("Could not parse file !\n")
     exit(84)
 
 set_tab(my_root,my_graph)
