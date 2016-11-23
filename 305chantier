@@ -65,8 +65,8 @@ def print_gantt(my_graph):
     #Sorting
     my_list = []
     for ID in my_graph:
-        my_list.append([ID, my_graph[ID][START], my_graph[ID][FLOAT]])
-    my_list = sorted(my_list, key=lambda elem: (elem[1], elem[2]))
+        my_list.append([ID, my_graph[ID][START], my_graph[ID][DURATION], my_graph[ID][FLOAT]])
+    my_list = sorted(my_list, key=lambda elem: (elem[1], elem[2], elem[3]))
     #printing work duration
     print("durée totale des travaux :", my_graph[my_list[-1][0]][END],"semaines")
     #Printing gantt txt
@@ -81,7 +81,7 @@ def print_gantt(my_graph):
     print()
     for elem in my_list:
         ID = elem[0] 
-        print(ID,"\t","("+str(my_graph[ID][FLOAT])+")","\t"+str(" "*my_graph[ID][START])+str("="*my_graph[ID][DURATION]))
+        print(ID,"\t"+"("+str(my_graph[ID][FLOAT])+")"+"\t"+str(" "*my_graph[ID][START])+str("="*my_graph[ID][DURATION]))
 
 
 
