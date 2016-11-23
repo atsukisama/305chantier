@@ -63,15 +63,15 @@ def set_tab(my_root, my_graph):
 
 def print_gantt(my_graph):
     #Sorting
-    tuple_list = []
+    my_list = []
     for ID in my_graph:
-        tuple_list.append((ID, my_graph[ID][END]))
-    tuple_list = sorted(tuple_list, key=lambda elem: (elem[1], elem[0]))
+        my_list.append([ID, my_graph[ID][START], my_graph[ID][FLOAT]])
+    my_list = sorted(my_list, key=lambda elem: (elem[1], elem[2], elem[0]))
     #printing work duration
-    print("durée totale des travaux :", my_graph[tuple_list[-1][0]][END],"semaines")
+    print("durée totale des travaux :", my_graph[my_list[-1][0]][END],"semaines")
     #Printing gantt txt
     print()
-    for elem in tuple_list:
+    for elem in my_list:
         ID = elem[0]
         if my_graph[ID][FLOAT] > 0:
             print(ID,"doit débuter entre","t="+str(my_graph[ID][START]),"et","t="+str(my_graph[ID][START] + my_graph[ID][FLOAT]))
@@ -79,7 +79,7 @@ def print_gantt(my_graph):
             print(ID,"doit débuter à","t="+str(my_graph[ID][START]))
     #printing gant txt schema
     print()
-    for elem in tuple_list:
+    for elem in my_list:
         ID = elem[0] 
         print(ID,"\t","("+str(my_graph[ID][FLOAT])+")","\t"+str(" "*my_graph[ID][START])+str("="*my_graph[ID][DURATION]))
 
