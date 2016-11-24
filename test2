@@ -1,6 +1,8 @@
 Cha;charpente a faire;4;Fon
+
 Cfg;chauffage;3;Ele;Mac
 Cou;couverture;2;Cha
+
 Ele;électricité;1;Cou;Mac
 Fin;finitions;9;Cou;Ele;Mac;Plo
 Fon;fondations;8;Ter
