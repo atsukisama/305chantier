@@ -3,8 +3,6 @@
 
 import csv
 import sys
-import multiprocessing
-import time
 
 #Define var
 NAME        = 0
@@ -112,10 +110,5 @@ def main(argv):
     print_gantt(my_graph, my_root)
 
 #Main script start
-program = multiprocessing.Process(target=main, name="main", args=(sys.argv,))
-program.start()
-program.join(9)
-if program.is_alive():
-    program.terminate()
-    program.join()
+main(sys.argv)
 #Main script end
